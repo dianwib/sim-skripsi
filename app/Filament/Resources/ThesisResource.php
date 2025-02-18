@@ -25,6 +25,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ThesisResource extends Resource
@@ -33,6 +34,18 @@ class ThesisResource extends Resource
     protected static ?string $navigationGroup = 'Academic';
 
     protected static ?string $navigationIcon = 'heroicon-o-document';
+
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin', 'Dosen']);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin']);
+    }
 
     public static function form(Form $form): Form
     {
@@ -113,7 +126,7 @@ class ThesisResource extends Resource
                     ->label('Status')
                     ->formatStateUsing(fn($state) => ThesisStatus::tryFrom($state)?->label() ?? $state)
                     ->badge()
-                    ->color(fn($state) => $state === ThesisStatus::Completed->value ? 'success' : 'warning'),
+                    ->color(fn($state) => ThesisStatus::tryFrom($state)?->color() ?? 'secondary'),
 
 
                 TextColumn::make('student.name')

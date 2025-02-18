@@ -35,6 +35,12 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -123,7 +129,7 @@ class UserResource extends Resource
                     ->searchable()
                     ->label('Username'),
 
-                    TextColumn::make('name')
+                TextColumn::make('name')
                     ->sortable()
                     ->searchable()
                     ->label('Name'),
@@ -138,7 +144,7 @@ class UserResource extends Resource
                     ->label('Role')
                     ->badge()
                     ->sortable()
-                    ->color(fn ($record) => $record->role?->getBadgeColor() ?? 'gray')
+                    ->color(fn($record) => $record->role?->getBadgeColor() ?? 'gray')
                     ->searchable(),
 
                 // TextColumn::make('student.name')
@@ -229,6 +235,9 @@ class UserResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+
+
 
     public static function getPages(): array
     {

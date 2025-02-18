@@ -23,6 +23,22 @@ class Lecturer extends Model
         'is_active',
     ];
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'lecturer_id');
+    }
+
+    public function theses()
+    {
+        return $this->hasMany(Thesis::class, 'lecturer_1_id')
+                    ->orWhere('lecturer_2_id', $this->id);
+    }
+
+    public function thesisSupervision()
+    {
+        return $this->hasMany(ThesisSupervision::class, 'lecturer_id');
+    }
+
     protected static function booted()
     {
         // static::addGlobalScope(new ActiveScope());

@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('external_link', 255)->nullable();
             $table->text('description')->nullable();
             $table->string('status', 255)->nullable();
+            $table->string('file_path', 255)->nullable();
+            $table->string('file_name', 255)->nullable();
             $table->string('count_revision', 255)->nullable();
 
 

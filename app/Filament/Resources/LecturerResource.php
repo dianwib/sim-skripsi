@@ -29,6 +29,12 @@ class LecturerResource extends Resource
     protected static ?string $navigationGroup = 'Academic';
     protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
 
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form

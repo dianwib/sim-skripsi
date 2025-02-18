@@ -20,6 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StudentResource extends Resource
@@ -28,6 +29,31 @@ class StudentResource extends Resource
 
     protected static ?string $navigationGroup = 'Academic';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
+    public static function canViewAny(): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin', 'Dosen']);
+    }
+
+    public static function canCreate(): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin']);
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin']);
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+
+        $user = auth()->user(); // Ambil user yang sedang login
+        return $user && $user->role && in_array($user->role->name, ['Admin']);
+    }
 
     public static function form(Form $form): Form
     {
